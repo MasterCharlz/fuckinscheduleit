@@ -1,6 +1,6 @@
 # FuckinScheduleIt (FSI)
 
-FSI is a shared weekly availability board for one group. Participants add a name, then mark the weekdays they can make it. Days that work for everyone are highlighted. **Clear** turns every day off while keeping names on the grid.
+FSI is a shared weekly availability board for one group. Participants add a name, then mark the weekdays they can make it. Days that work for everyone are highlighted. The grid checks for shared changes every five seconds. **Clear** turns every day off while keeping names on the grid.
 
 ## Run locally
 

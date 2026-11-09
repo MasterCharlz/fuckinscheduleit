@@ -29,44 +29,37 @@ async function readResponse<T>(response: Response): Promise<T> {
 function App() {
   const [participants, setParticipants] = useState<Participant[]>([])
   const [name, setName] = useState('')
-  const [loading, setLoading] = useState(true)
   const [busyParticipant, setBusyParticipant] = useState<string | null>(null)
   const [status, setStatus] = useState('')
   const [error, setError] = useState('')
 
-  const loadBoard = async () => {
-    setLoading(true)
-    setError('')
-
-    try {
-      const response = await fetch('/api/participants')
-      const data = await readResponse<BoardResponse>(response)
-      setParticipants(data.participants)
-    } catch {
-      setError('The shared schedule could not be reached. Try refreshing in a moment.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
     let active = true
+    let requestInFlight = false
 
-    const loadInitialBoard = async () => {
+    const syncBoard = async () => {
+      if (requestInFlight) return
+      requestInFlight = true
+
       try {
         const response = await fetch('/api/participants')
         const data = await readResponse<BoardResponse>(response)
         if (!active) return
         setParticipants(data.participants)
+        setError('')
       } catch {
-        if (active) setError('The shared schedule could not be reached. Try refreshing in a moment.')
+        if (active) setError('The shared schedule could not be reached. We will retry automatically.')
       } finally {
-        if (active) setLoading(false)
+        requestInFlight = false
       }
     }
 
-    void loadInitialBoard()
-    return () => { active = false }
+    void syncBoard()
+    const intervalId = window.setInterval(() => void syncBoard(), 5000)
+    return () => {
+      active = false
+      window.clearInterval(intervalId)
+    }
   }, [])
 
   const addParticipant = async (event: FormEvent<HTMLFormElement>) => {
@@ -165,9 +158,6 @@ function App() {
           </div>
         </form>
         <div className="action-buttons">
-          <button type="button" className="quiet-button" onClick={() => void loadBoard()} disabled={loading}>
-            Refresh
-          </button>
           <button type="button" className="quiet-button reset-button" onClick={() => void resetSchedule()} disabled={participants.length === 0}>
             Clear
           </button>
