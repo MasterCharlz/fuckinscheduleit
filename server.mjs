@@ -104,6 +104,16 @@ async function handleApi(request, response, url) {
   }
 
   const participantMatch = url.pathname.match(/^\/api\/participants\/([0-9a-f-]+)$/i)
+  if (participantMatch && request.method === 'DELETE') {
+    await updateBoard((board) => {
+      const nextBoard = board.filter((person) => person.id !== participantMatch[1])
+      if (nextBoard.length === board.length) throw new RequestError('Participant not found.', 404)
+      return { board: nextBoard }
+    })
+    sendJson(response, 200, { ok: true })
+    return true
+  }
+
   if (participantMatch && request.method === 'PATCH') {
     const body = await readJsonBody(request)
     if (!Number.isInteger(body.dayIndex) || body.dayIndex < 0 || body.dayIndex >= dayCount || typeof body.available !== 'boolean') {

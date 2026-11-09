@@ -117,6 +117,22 @@ function App() {
     }
   }
 
+  const removeParticipant = async (participant: Participant) => {
+    if (!window.confirm(`Remove ${participant.name} and their availability?`)) return
+
+    setBusyParticipant(participant.id)
+    setError('')
+    try {
+      const response = await fetch(`/api/participants/${participant.id}`, { method: 'DELETE' })
+      await readResponse<{ ok: boolean }>(response)
+      setParticipants((current) => current.filter((person) => person.id !== participant.id))
+    } catch {
+      setError(`Could not remove ${participant.name}. Try again.`)
+    } finally {
+      setBusyParticipant(null)
+    }
+  }
+
   const resetSchedule = async () => {
     if (!window.confirm('Turn every day off for everyone? Names will stay on the grid.')) return
 
@@ -189,6 +205,16 @@ function App() {
               <div className="participant-row" role="row" key={participant.id}>
                 <div className="participant-name" role="rowheader">
                   <span className="name-text" title={participant.name}>{participant.name}</span>
+                  <button
+                    type="button"
+                    className="remove-button"
+                    aria-label={`Remove ${participant.name}`}
+                    title={`Remove ${participant.name}`}
+                    disabled={busyParticipant === participant.id}
+                    onClick={() => void removeParticipant(participant)}
+                  >
+                    ×
+                  </button>
                 </div>
                 {weekdays.map((day, dayIndex) => (
                   <div className={`day-cell${overlappingDays.includes(day) ? ' is-overlap' : ''}`} role="cell" key={day}>

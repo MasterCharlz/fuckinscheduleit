@@ -212,12 +212,36 @@ button:disabled {
 }
 
 .name-text {
+  min-width: 0;
   overflow: hidden;
   color: var(--ink);
   font-size: 13px;
   font-weight: 650;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.remove-button {
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+  min-height: 26px;
+  margin-left: auto;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  font-size: 19px;
+  line-height: 1;
+}
+
+.remove-button:hover:not(:disabled) {
+  color: #a63e30;
+  background: #fae9e4;
+  border-color: transparent;
 }
 
 .day-cell {
