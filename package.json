@@ -1,0 +1,33 @@
+{
+  "name": "fsi",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n API,WEB \"node --env-file-if-exists=.env server.mjs --api-only\" \"vite\"",
+    "dev:api": "node --env-file-if-exists=.env server.mjs --api-only",
+    "import:local-data": "node --env-file-if-exists=.env scripts/import-local-data.mjs",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "start": "node --env-file-if-exists=.env server.mjs"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^10.0.7",
+    "oxlint": "^1.90.0",
+    "typescript": "~7.0.2",
+    "vite": "^8.3.6"
+  }
+}
